@@ -3,6 +3,12 @@ import Card from "./Card";
 
 const CardList = ({ robots }) => {
   const cardArray = robots.map((user, i) => {
+
+    //it will only work in production build
+    // if(true) {
+    //   throw new Error("test error!");
+    // }
+
     return (
       <Card
         key={i}
