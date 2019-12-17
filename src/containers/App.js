@@ -1,4 +1,5 @@
 import React, { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
 import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
@@ -7,29 +8,38 @@ import Random from 'lodash/random';
 import {FriendType} from "../components/FriendType";
 import './App.css';
 
+import { setSearchField } from '../actions';
 
+const mapStateToProps = state => {
+  return {
+    searchField: state.searchField
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSearchChange: (event) => dispatch(setSearchField(event.target.value))
+  }
+}
 class App extends Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
 
     this.state = {
       robots: [],
-      searchfield: "",
       type: FriendType[3-1],
       picSet: 3
     };
   }
+  
   //experimental. alternative is bind it in the constructor.
-  onSearchChange = (event) => {
-    this.setState({searchfield: event.target.value});
-  }
-
   randomize = (event) => {
     const set = Random(1, 5);
     this.setState({ picSet: set , type: FriendType[set-1]});
   }
 
   componentDidMount() {
+    console.log(this.props.store);
     fetch("https://jsonplaceholder.typicode.com/users") 
       .then(response => response.json())
       .then(users => this.setState({robots: users}))
@@ -38,12 +48,12 @@ class App extends Component {
   }
 
   render() {
-    const { searchfield, robots, picSet, type } = this.state;
-
+    const { robots, picSet, type } = this.state;
+    const { searchField, onSearchChange } = this.props;
     const filteredRobots = robots.filter(robot => {
       return robot.name
         .toLowerCase()
-        .includes(searchfield.toLowerCase());
+        .includes(searchField.toLowerCase());
     });
 
     if(!robots.length) {
@@ -54,7 +64,7 @@ class App extends Component {
         <div className="tc">
           <h1 className="f1">{type}Friends</h1>
           <SearchBox
-            searchChange={this.onSearchChange}
+            searchChange={onSearchChange}
             randomize={this.randomize}
           />
           <Scroll>
@@ -68,4 +78,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
