@@ -1,0 +1,1 @@
+export const FriendType = ["ROBO", "MONSTER", "SUAVE", "CAT", "HUMAN"];

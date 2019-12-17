@@ -3,7 +3,10 @@ import CardList from '../components/CardList';
 import SearchBox from '../components/SearchBox';
 import Scroll from '../components/Scroll';
 import ErrorBoundary from '../components/ErrorBoundary';
+import Random from 'lodash/random';
+import {FriendType} from "../components/FriendType";
 import './App.css';
+
 
 class App extends Component {
   constructor(){
@@ -11,12 +14,19 @@ class App extends Component {
 
     this.state = {
       robots: [],
-      searchfield: ''
+      searchfield: "",
+      type: FriendType[3-1],
+      picSet: 3
     };
   }
-  //experimental. alternative is bind it in constructor.
+  //experimental. alternative is bind it in the constructor.
   onSearchChange = (event) => {
     this.setState({searchfield: event.target.value});
+  }
+
+  randomize = (event) => {
+    const set = Random(1, 5);
+    this.setState({ picSet: set , type: FriendType[set-1]});
   }
 
   componentDidMount() {
@@ -28,7 +38,7 @@ class App extends Component {
   }
 
   render() {
-    const { searchfield, robots } = this.state;
+    const { searchfield, robots, picSet, type } = this.state;
 
     const filteredRobots = robots.filter(robot => {
       return robot.name
@@ -42,11 +52,14 @@ class App extends Component {
     return (
       <Fragment>
         <div className="tc">
-          <h1 className="f1">RoboFriends</h1>
-          <SearchBox searchChange={this.onSearchChange} />
+          <h1 className="f1">{type}Friends</h1>
+          <SearchBox
+            searchChange={this.onSearchChange}
+            randomize={this.randomize}
+          />
           <Scroll>
-            <ErrorBoundary>
-              <CardList robots={filteredRobots} />
+            <ErrorBoundary robots={filteredRobots}>
+              <CardList robots={filteredRobots} picSet={picSet} />
             </ErrorBoundary>
           </Scroll>
         </div>
