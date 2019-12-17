@@ -1,6 +1,8 @@
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRandom } from "@fortawesome/free-solid-svg-icons";
 
-const SearchBox = ({searchChange}) => {
+const SearchBox = ({searchChange, randomize}) => {
   return (
     <div className="pa2">
       <input
@@ -9,6 +11,12 @@ const SearchBox = ({searchChange}) => {
         placeholder="search robots"
         onChange={searchChange}
       />
+      <button
+        onClick={randomize}
+        className="pa3 link dim dib hot-pink bg-black"
+      >
+        <FontAwesomeIcon icon={faRandom} />
+      </button>
     </div>
   );
 };
