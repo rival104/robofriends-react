@@ -8,25 +8,28 @@ import Random from 'lodash/random';
 import {FriendType} from "../components/FriendType";
 import './App.css';
 
-import { setSearchField } from '../actions';
+import { setSearchField, requestRobots } from '../actions';
 
 const mapStateToProps = state => {
   return {
-    searchField: state.searchField
+    searchField: state.searchRobots.searchField,
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
+    error: state.requestRobots.error
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSearchChange: (event) => dispatch(setSearchField(event.target.value))
-  }
+    onSearchChange: event => dispatch(setSearchField(event.target.value)),
+    onRequestRobots: () => dispatch(requestRobots())
+  };
 }
 class App extends Component {
   constructor(props){
     super(props);
 
     this.state = {
-      robots: [],
       type: FriendType[3-1],
       picSet: 3
     };
@@ -39,24 +42,19 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.store);
-    fetch("https://jsonplaceholder.typicode.com/users") 
-      .then(response => response.json())
-      .then(users => this.setState({robots: users}))
-    ;
-    // this.setState({robots: robots});
+    this.props.onRequestRobots();
   }
 
   render() {
-    const { robots, picSet, type } = this.state;
-    const { searchField, onSearchChange } = this.props;
+    const { picSet, type } = this.state;
+    const { searchField, onSearchChange, robots, isPending } = this.props;
     const filteredRobots = robots.filter(robot => {
       return robot.name
         .toLowerCase()
         .includes(searchField.toLowerCase());
     });
 
-    if(!robots.length) {
+    if(isPending) {
       return <h1 className="tc"> Loading... </h1>
     }
     return (
